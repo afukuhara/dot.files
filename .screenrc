@@ -1,0 +1,16 @@
+escape ^Tt
+vbell off
+hardstatus alwayslastline " %`%-w%{=b bw}%n %t%{-}%+w"
+defscrollback 1024
+autodetach on
+defutf8 on
+bind ^k kill
+markkeys "h=^B:l=^F:$=^E"
+
+bind x command -c REGION
+bind -c REGION 2 split
+bind -c REGION 1 only
+bind -c REGION 0 remove
+bind ^o focus
+bind -c REGION ^ resize
+
