@@ -16,3 +16,8 @@ bind -c REGION 3 split -v
 bind ^o focus
 bind -c REGION ^ resize
 
+termcapinfo xterm* ti@:te@
+
+bind -c REGION s eval "split" "focus" "select 0" 'command -c cwindow' 'echo "Window mode: "'
+bind -c REGION v eval "split -v" "focus" "select 0" 'command -c cwindow' 'echo "Window mode: "'
+
