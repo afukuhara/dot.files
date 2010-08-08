@@ -266,7 +266,7 @@
 ;;   user infos.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+
 
 ;; @ Requirements ;;;
 
@@ -345,6 +345,7 @@
     (tcl-mode              . (tcl-compile       kill-compilation)) ; JWH
     (python-mode           . (python-compile    kill-compilation)) ; BM
     (ruby-mode             . (ruby-compile      kill-compilation)) ; CLGC
+    (php-mode              . (php-compile       kill-compilation)) ; CLGC
     ;(message-mode          . (message-compile   kill-compilation))
     (fundamental-mode      . (guess-compile     nil)) ; bound dynamically
     (text-mode             . (guess-compile     nil)) ; itou
@@ -424,7 +425,8 @@ To add a new filename regexp do the following:
     ("perl"   .  perl-mode)
     ("tcl"    .   tcl-mode) ; JWH
     ("python" . python-mode) ; BM
-    ("ruby"   . ruby-mode)) ; CLGC
+    ("ruby"   . ruby-mode) ; CLGC
+    ("php"    . php-mode))
   "Assoc list of compile function for some known shells.
 
 Each element look like (SHELL . MODE) This variable look like
@@ -681,7 +683,7 @@ time to read all the messages. If you don't want any delay set it to
 See also function sit-for."
   :type 'integer
   :group 'compilation)
-
+
 
 ;; @@ Remote compilation vars ;;;
 (defgroup compilation-remote nil
@@ -754,7 +756,7 @@ mode-compile-remote-execute-command."
   :type 'string
   :group 'compilation-remote)
 
-
+
 
 ;; @@ c-mode compile variables ;;;
 (defgroup compile-c nil
@@ -832,7 +834,7 @@ in c mode."
   :type 'string
   :group 'compile-c)
 
-
+
 
 ;; @@ java-mode compile variables ;;;
 (defgroup compile-java nil
@@ -910,7 +912,7 @@ in java mode."
   :type 'string
   :group 'compile-java)
 
-
+
 
 ;; @@ c++-mode compile variables ;;;
 (defgroup compile-c++ nil
@@ -986,7 +988,7 @@ in c++ mode."
   :type 'string
   :group 'compile-c++)
 
-
+
 
 ;; @@ ada-mode compile variables ;;;
 (defgroup compile-ada nil
@@ -1067,7 +1069,7 @@ in ada mode."
   :type 'string
   :group 'compile-ada)
 
-
+
 
 ;; @@ fortran-mode compile variables ;;;
 (defgroup compile-fortran nil
@@ -1143,7 +1145,7 @@ in Fortran mode."
   :type 'string
   :group 'compile-fortran)
 
-
+
 
 ;; @@ sh-mode compile variables ;;;
 (defgroup compile-sh nil
@@ -1168,7 +1170,7 @@ The -f flag must always be present."
   "Alist that specifies how to match errors in sh output.
 
 See variable compilation-error-regexp-alist for more details.")
-
+
 
 ;; @@ csh-mode compile variables ;;;
 (defgroup compile-csh nil
@@ -1193,7 +1195,7 @@ The -f flag must always be present."
   "Alist that specifies how to match errors in csh output.
 
 See variable compilation-error-regexp-alist for more details.")
-
+
 
 ;; @@ zsh-mode compile variables ;;;
 (defgroup compile-zsh nil
@@ -1216,7 +1218,7 @@ See variable compilation-error-regexp-alist for more details.")
   "Alist that specifies how to match errors in csh output.
 
 See variable compilation-error-regexp-alist for more details.")
-
+
 
 ;; @@ tcl-mode compile variables - JWH ;;;
 (defgroup compile-tcl nil
@@ -1241,7 +1243,7 @@ See variable compilation-error-regexp-alist for more details.")
   "Alist that specifies how to match errors in tcl output.
 
 See variable compilation-error-regexp-alist for more details.")
-
+
 
 ;; @@ python-mode compile variables - BM ;;;
 (defgroup compile-python nil
@@ -1266,7 +1268,7 @@ See variable compilation-error-regexp-alist for more details.")
   "Alist that specifies how to match errors in python output.
 
 See variable compilation-error-regexp-alist for more details.")
-
+
 
 ;; @@ perl-mode compile variables ;;;
 (defgroup compile-perl nil
@@ -1298,7 +1300,7 @@ See variable compilation-error-regexp-alist for more details.")
   "Alist that specifies how to match errors in perl output.
 
 See variable compilation-error-regexp-alist for more details.")
-
+
 
 ;; @@ ruby-mode compile variables ;;;
 (defgroup compile-ruby nil
@@ -1324,7 +1326,32 @@ See variable compilation-error-regexp-alist for more details.")
   "Alist that specifies how to match errors in ruby output.
 
 See variable compilation-error-regexp-alist for more details.")
-
+
+;; @@ php-mode compile variables ;;;
+(defgroup compile-php nil
+  "PHP compilation options"
+  :group 'compilation-script)
+
+(defcustom php-command "php" 
+  "Command to run php" 
+  :type 'string 
+  :group 'compile-php)
+
+(defcustom php-dbg-flags "" 
+  "Flags to give php for catching warnings" 
+  :type 'string 
+  :group 'compile-php)
+
+
+(defvar php-compilation-error-regexp-alist
+  '(
+    ;; Unit Tests
+    ("test[a-zA-Z0-9_]*([A-Z][a-zA-Z0-9_]*) \\[\\(.*\\):\\([0-9]+\\)\\]:" 1 2)
+    ;; Errors and Warnings
+    ("\\(.*?\\)\\([0-9A-Za-z_./\:-]+\\.rb\\):\\([0-9]+\\)" 2 3))
+  "Alist that specifies how to match errors in php output.
+
+See variable compilation-error-regexp-alist for more details.")
 
 ;; @@ emacs lisp compile variables ;;;
 
@@ -1352,7 +1379,7 @@ needing to be recompiled or not."
   "Extension added to byte-compiled emacs sources files."
   :type 'string
   :group 'compilation-elisp)
-
+
 
 ;; @@ Misc declarations ;;;
 
@@ -1365,7 +1392,7 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
 
 (defconst mode-compile-help-address "heddy.Boubaker@cena.fr"
   "E-Mail address of mode-compile maintainer.")
-
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; @ No user modifiable stuff below this line ;;;
@@ -2116,7 +2143,7 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
           (mc--msg "File %s matches regexp %s" fname (car found))
           (setq mc--kill-compile (mc--assq-get-fkill found))
           (mc--assq-get-fcomp found))))))
-
+
 
 ;; @ mode specific functions ;;;
 
@@ -2411,6 +2438,17 @@ to a value understandable by compile's `next-error'.
 See variables compilation-error-regexp-alist or ruby-compilation-error-regexp-alist."
   (mc--shell-compile ruby-command ruby-dbg-flags ruby-compilation-error-regexp-alist))
 
+(defun php-compile ()
+  ;; CLGC
+  "Run `php-command' on current-buffer (`php-mode').
+
+User is prompted for arguments to run their php program with.
+If you want to step throught errors set the variable `php-compilation-error-regexp-alist'
+to a value understandable by compile's `next-error'.
+See variables compilation-error-regexp-alist or php-compilation-error-regexp-alist."
+  (mc--shell-compile php-command php-dbg-flags php-compilation-error-regexp-alist))
+
+
 (defun default-compile ()
   "Default function invoked by `mode-compile' (\\[mode-compile])
 when everything else failed.
@@ -2463,7 +2501,7 @@ The steps to guess which command to use to compile are:
                  (buffer-name))
         (setq mc--kill-compile 'kill-compilation)
         'default-compile)))))
-
+
 
 ;; @ user accessible/exported function ;;;
 
@@ -2512,7 +2550,7 @@ The steps to guess which command to use to compile are:
     nil
     nil
     "Dear Heddy,")))
-
+
 
 ;;;###autoload
 (defun mode-compile (&optional remote-host)
@@ -2543,6 +2581,7 @@ Currently know how to compile in:
  `tcl-mode'              -- function tcl-compile.
  `python-mode'           -- function python-compile.
  `ruby-mode'             -- function ruby-compile.
+ `php-mode'              -- function php-compile.
  `fundamental-mode'      -- function guess-compile.
  `text-mode'             -- function guess-compile.
  `indented-text-mode'    -- function guess-compile.
@@ -2620,7 +2659,7 @@ Bound on \\[mode-compile]."
         (mc--run-hooks 'mode-compile-after-compile-hook)))))
 
 (provide 'mode-compile)
-
+
 
 ;;;###autoload
 (defun mode-compile-kill()
@@ -2648,6 +2687,7 @@ Currently know how to kill compilations from:
  `tcl-mode'              -- function kill-compilation.
  `python-mode'           -- function kill-compilation.
  `ruby-mode'             -- function kill-compilation.
+ `php-mode'             -- function kill-compilation.
  `fundamental-mode'      -- Bound dynamically.
  `text-mode'             -- Bound dynamically.
  `indented-text-mode'    -- Bound dynamically.
@@ -2681,7 +2721,7 @@ Bound on \\[mode-compile-kill]."
 
 (provide 'mode-compile-kill)
 
-
+
 
 ;;; Local variables:
 ;;; outline-regexp: ";; @+"

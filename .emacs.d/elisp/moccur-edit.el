@@ -1,30 +1,30 @@
-;;; moccur-edit.el
+;;; moccur-edit.el --- apply replaces to multiple files
 ;; -*- Mode: Emacs-Lisp -*-
 
-;;  $Id: moccur-edit.el,v 2.6 2007/03/30 11:49:52 akihisa Exp $
+;;  $Id: moccur-edit.el,v 2.16 2008/08/01 09:32:18 akihisa Exp $
 
 ;; Author: Matsushita Akihisa <akihisa@mail.ne.jp>
 ;; Keywords: moccur edit
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 2, or (at your option)
-;; any later version.
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 3, or (at
+;; your option) any later version.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program; if not, you can either send email to this
-;; program's maintainer or write to: The Free Software Foundation,
-;; Inc.; 59 Temple Place, Suite 330; Boston, MA 02111-1307, USA.
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA 02110-1301, USA.
 
 ;;; Commentary:
 
-;; moccur-edit provides to edit moccur buffer and to apply the changes to
-;; the file.
+;; moccur-edit provides to edit moccur buffer of color-moccur.el and
+;; to apply the changes to the file.
 
 ;; This file requires color-moccur.el
 ;; The latest version of these program can be downloaded from
@@ -40,7 +40,16 @@
 ;; The latest version of this program can be downloaded from
 ;; http://www.bookshelf.jp/elc/moccur-edit.el
 
-;; Usage:
+;;; Hint (.emacs)
+
+;; Modified buffers are saved automatically.
+;; Thanks request!
+
+;; (defadvice moccur-edit-change-file
+;;  (after save-after-moccur-edit-buffer activate)
+;;  (save-buffer))
+
+;;; Usage:
 
 ;; You can start editing the names of the files by typing "C-c C-i" or
 ;; "C-x C-q".
@@ -55,6 +64,10 @@
 
 (require 'color-moccur)
 
+(defgroup moccur-edit nil
+  "Customize moccur-edit"
+  :group 'matching)
+
 (defface moccur-edit-face
   '((((class color)
       (background dark))
@@ -64,7 +77,8 @@
      (:background "ForestGreen" :bold t))
     (t
      ()))
-  "*Face used for the changed text on moccur buffer.")
+  "*Face used for the changed text on moccur buffer."
+  :group 'moccur-edit)
 
 (defface moccur-edit-file-face
   '((((class color)
@@ -75,7 +89,8 @@
      (:background "ForestGreen" :bold t))
     (t
      ()))
-  "*Face used for the changed text on file buffer.")
+  "*Face used for the changed text on file buffer."
+  :group 'moccur-edit)
 
 (defface moccur-edit-done-face
   '((((class color)
@@ -86,7 +101,8 @@
      (:foreground "ForestGreen" :bold t))
     (t
      ()))
-  "*Face used for the line on moccur buffer that can apply to file.")
+  "*Face used for the line on moccur buffer that can apply to file."
+  :group 'moccur-edit)
 
 (defface moccur-edit-reject-face
   '((((class color)
@@ -97,17 +113,31 @@
      (:foreground "red" :bold t))
     (t
      ()))
-  "*Face used for the line on moccur buffer that can not apply to file.")
-
-(defgroup moccur-edit nil
-  "Customize moccur-edit"
-  :group 'matching)
+  "*Face used for the line on moccur buffer that can not apply to file."
+  :group 'moccur-edit)
 
 (defcustom moccur-edit-highlight-edited-text nil
   "*Non-nil means to highlight the edited text."
   :group 'moccur-edit
   :type 'boolean
   )
+
+(defcustom moccur-edit-remove-overlays nil
+  "*Non-nil means to remove overlays when moccur-quit is run."
+  :group 'moccur-edit
+  :type 'boolean
+  )
+
+(defcustom moccur-edit-remove-overlays-after-save-buffer t
+  "*Non-nil means to remove overlays after save-buffer."
+  :group 'moccur-edit
+  :type 'boolean
+  )
+
+(defcustom moccur-query-when-buffer-read-only t
+  "*Non-nil means query if read-only buffers should be made writable."
+  :group 'moccur-edit
+  :type 'boolean)
 
 (defvar moccur-edit-overlays nil)
 (defvar moccur-edit-file-overlays nil)
@@ -177,7 +207,7 @@
               (setq moccur-edit-buf "grep")))
         (beginning-of-line)
         (if (re-search-forward
-             "^[-+ ]*Buffer: \\([^\n]*\\) File:" (line-end-position) t)
+             "^[-+ ]*Buffer: \\([^\r\n]*\\) File:" (line-end-position) t)
             (setq moccur-edit-buf (buffer-substring-no-properties
                                    (match-beginning 1)
                                    (match-end 1)))))))
@@ -186,9 +216,9 @@
     (if (re-search-forward "^[ ]*\\([0-9]+\\) \\([^\n]+$\\)" (line-end-position) t)
         (progn
           (setq moccur-edit-line
-                (string-to-int (buffer-substring-no-properties
-                                (match-beginning 1)
-                                (match-end 1))))
+                (string-to-number (buffer-substring-no-properties
+                                   (match-beginning 1)
+                                   (match-end 1))))
           (setq moccur-edit-text (buffer-substring-no-properties
                                   (match-beginning 2)
                                   (match-end 2))))))
@@ -197,13 +227,23 @@
 (defun moccur-edit-change-file ()
   "*The changes on the moccur buffer apply to the file"
   (if buffer-read-only
-      nil
+      (if (and moccur-query-when-buffer-read-only
+               (buffer-file-name)
+               ;;(file-writable-p (buffer-file-name))
+               (y-or-n-p (format "Make buffer %s writable?"
+                                 (current-buffer)))
+               (or (toggle-read-only -1) t)
+               (not buffer-read-only))
+          (moccur-edit-change-file)
+        (display-warning             ; (Not defined in old Emacses! *)
+         'moccur-edit
+         (format "Buffer read only: %s" (current-buffer)))
+        nil)
     (goto-line moccur-edit-line)
     (delete-region (line-beginning-position)
                    (line-end-position))
     (insert moccur-edit-text)
-    t)
-  )
+    t))
 
 (defun moccur-edit-put-color-file ()
   "*Highlight the changed line of the file"
@@ -227,6 +267,29 @@
     (setq moccur-edit-result-overlays (cons ov moccur-edit-result-overlays))
     ))
 
+(defun moccur-edit-remove-overlays ()
+  "Remove all overlays in all buffers."
+  (interactive)
+  (save-current-buffer
+    (let (ov buf (buflist (buffer-list)))
+      (while buflist
+        (setq buf (car buflist))
+        (setq buflist (cdr buflist))
+        (when (and buf
+                   (buffer-live-p buf))
+          (set-buffer buf)
+          (while moccur-edit-file-overlays
+            (delete-overlay (car moccur-edit-file-overlays))
+            (setq moccur-edit-file-overlays (cdr moccur-edit-file-overlays))))))))
+
+(defadvice moccur-quit (before moccur-edit-kill-buffer activate)
+  (when moccur-edit-remove-overlays
+    (moccur-edit-remove-overlays)))
+
+(defadvice basic-save-buffer (before moccur-remove-overlays-before-save-buffer activate)
+  (when moccur-edit-remove-overlays-after-save-buffer
+    (moccur-edit-remove-overlays)))
+
 (defun moccur-edit-finish-edit ()
   "*The changes on the grep buffer apply to the file"
   (interactive)
@@ -239,27 +302,27 @@
       (when beg
         (goto-char beg)
         (moccur-edit-get-info)
-        
+
         (if (and
              (listp moccur-edit-buf)
              (string= (car moccur-edit-buf) "grep"))
             (set-buffer (find-file-noselect (cdr moccur-edit-buf)))
           (set-buffer moccur-edit-buf))
-        (when (and
-               (moccur-edit-change-file) ;; File is changed. t: success
-               moccur-edit-highlight-edited-text)
+        ;; <WL: fixed a bug here>
+        (if (moccur-edit-change-file)
+            ;; File is changed. t: success
             (progn
-              (moccur-edit-put-color-file) ;; Highlight changed text
+              (when moccur-edit-highlight-edited-text
+                (moccur-edit-put-color-file)) ;; Highlight changed text
               (set-buffer cbuf)
               (moccur-edit-put-face 'moccur-edit-done-face))
-          (set-buffer cbuf)
-          (moccur-edit-put-face 'moccur-edit-reject-face))
+         (set-buffer cbuf)
+         (moccur-edit-put-face 'moccur-edit-reject-face))
         ;; Return previous buffer
         (set-buffer cbuf)
         (delete-overlay ov)
         )))
-  (moccur-edit-reset-key)
-  )
+  (moccur-edit-reset-key))
 
 (defun moccur-edit-remove-change (beg end)
   (interactive "r")
@@ -285,7 +348,6 @@
   ;; Cause use of ellipses for invisible text.
   (setq buffer-invisibility-spec nil)
 
-  (make-local-hook 'after-change-functions)
   (add-hook 'after-change-functions 'moccur-mode-change-face nil t)
   )
 
@@ -338,17 +400,21 @@
       (end-of-line)
       (setq end (point))
       (put-text-property beg end 'read-only t)
+      (put-text-property beg end 'front-sticky '(read-only))
       (while (re-search-forward "\\(^[-+ ]*Buffer: [^\n]*File[^\n]+$\\)" nil t)
         (put-text-property (match-beginning 0)
-                           (match-end 0) 'read-only t))
+                               (match-end 0) 'read-only t)
+        (put-text-property (match-beginning 0) (match-end 0) 'front-sticky '(read-only)))
       (goto-char (point-min))
       (while (re-search-forward "\\(^[ ]*[0-9]+\\)" nil t)
         (put-text-property (match-beginning 1)
-                           (match-end 1) 'read-only t))
+                           (match-end 1) 'read-only t)
+        (put-text-property (match-beginning 0) (match-end 0) 'front-sticky '(read-only)))
       (goto-char (point-min))
       (while (re-search-forward "^\\([\r\n]+\\)" nil t)
         (put-text-property (match-beginning 1)
-                           (match-end 1) 'read-only t))
+                           (match-end 1) 'read-only t)
+        (put-text-property (match-beginning 0) (match-end 0) 'front-sticky '(read-only)))
       )))
 
 (defun moccur-edit-reset-key ()
@@ -368,7 +434,6 @@
   (force-mode-line-update)
   )
 
-
 ;; moccur-mode
 (defvar moccur-edit-mode-map ())
 (defun moccur-edit-set-key ()
@@ -449,7 +514,7 @@ commands.  This advice only has effect in moccur-edit mode."
           (progn
             (moccur-edit-add-skip-in-replace 'search-forward)
             (moccur-edit-add-skip-in-replace 're-search-forward)
-            (unwind-protect 
+            (unwind-protect
                 ad-do-it
               (progn
                 (ad-remove-advice 'search-forward
