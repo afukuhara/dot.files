@@ -4,13 +4,14 @@
 ;;; font-lockの設定
 (global-font-lock-mode t)
 
+;; font-lock extension
+(require 'font-lock+)
+
 ;;; タブのデフォルト設定
 (setq-default tab-width 4)    ; 表示幅
 (setq-default indent-tabs-mode nil)    ; タブ->スペース
 (setq indent-line-function 'indent-relative-maybe)
 
-;; font-lock extension
-(require 'font-lock+)
 
 ;; リージョンをハイライト
 (setq-default transient-mark-mode t)
@@ -37,6 +38,41 @@
 (require 'wdired)
 (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
 
+
+;; 縦分割時に文字を折り返す
+(setq truncate-partial-width-windows nil)
+
+;; 列数表示
+(column-number-mode t)
+
+;; BS で選択範囲を消す
+(delete-selection-mode t)
+
+;; hide tool-bar
+(tool-bar-mode 0)
+
+;; dired を拡張する
+(load "dired-x")
+
+
+(load "sorter")
+
+;; バッファの読み直し
+(global-set-key "\C-x\C-r" 'revert-buffer)
+
+;; デフォルトの文字コード
+(setq default-buffer-file-coding-system 'utf-8)
+
+;; スタートアップメッセージの禁止
+(setq inhibit-startup-message t)
+
+;; reload a file when it was changed by another process
+(global-auto-revert-mode t)
+
+(set-scroll-bar-mode 'right)
+
+;; --------------------------------------------------
+
 ;; moccur-grep-find
 (require 'color-moccur)
 (load "moccur-edit")
@@ -44,11 +80,6 @@
 (setq dmoccur-exclusion-mask
       (append '("\\.svn\.\*" "\\.git\.\*" "\\.log\$")
               dmoccur-exclusion-mask))
-
-;;; RD-mode
-;(global-font-lock-mode 1 t)
-;(autoload 'rd-mode "rd-mode" "major mode for ruby document formatter RD" t)
-;(add-to-list 'auto-mode-alist '("\\.rd$" . rd-mode))
 
 
 ;; filecache
@@ -64,57 +95,15 @@
 (add-hook 'text-mode-hook
           '(lambda () (jaspace-mode-on)))
 
-;; 縦分割時に文字を折り返す
-(setq truncate-partial-width-windows nil)
-
-;; 列数表示
-(column-number-mode t)
-
-;; BS で選択範囲を消す
-(delete-selection-mode t)
 
 ;; キルリングの一覧を表示し選択ヤンクできるようにする
 (autoload 'kill-summary "kill-summary" nil t)
 (define-key global-map "\ey" 'kill-summary)
 
 
-;; hide tool-bar
-(tool-bar-mode 0)
-
-
-;;-----------------------------------------------------------------
-;; psvn.el
-;;-----------------------------------------------------------------
-(require 'psvn)
-
-(define-key svn-status-mode-map "q" 'egg-self-insert-command)
-(define-key svn-status-mode-map "Q" 'svn-status-bury-buffer)
-(define-key svn-status-mode-map "p" 'svn-status-previous-line)
-(define-key svn-status-mode-map "n" 'svn-status-next-line)
-(define-key svn-status-mode-map "<" 'svn-status-examine-parent)
-
-(add-hook 'dired-mode-hook
-          '(lambda ()
-             (require 'dired-x)
-             ;;(define-key dired-mode-map "V" 'cvs-examine)
-             (define-key dired-mode-map "V" 'svn-status)
-             (turn-on-font-lock) ))
-
-(setq svn-status-hide-unmodified t)
-
-(setq process-coding-system-alist
-      (cons '("svn" . euc-jp) process-coding-system-alist))
-
-;; VC-SVN
-(add-to-list 'vc-handled-backends 'SVN)
-
-
 (require 'company-mode)
 (require 'company-bundled-completions)
 
-
-;; dired を拡張する
-(load "dired-x")
 
 ;; フォルダを開く時, 新しいバッファを作成しない
 (defvar my-dired-before-buffer nil)
@@ -136,19 +125,6 @@
   (if (eq major-mode 'dired-mode)
       (kill-buffer my-dired-before-buffer)))
 
-(load "sorter")
-
-;; バッファの読み直し
-(global-set-key "\C-x\C-r" 'revert-buffer)
-
-;; デフォルトの文字コード
-(setq default-buffer-file-coding-system 'utf-8)
-
-
-
-;; スタートアップメッセージの禁止
-(setq inhibit-startup-message t)
-
 
 
 ;; App::Ack (for source code searching)
@@ -161,17 +137,6 @@
              (setq grep-find-command "ack --nocolor --nogroup ")
              (require 'wdired)))
 
-;; reload a file when it was changed by another process
-(global-auto-revert-mode t)
-
-
-(set-scroll-bar-mode 'right)
-
-;; git
-(load "git.el" t)
-(load "git-blame.el" t)
-(load "vc-git.el" t)
-(add-to-list 'vc-handled-backends 'GIT)
 
 
 ;; 同一バッファ名にディレクトリ名を追加する
@@ -186,7 +151,6 @@
 (require 'anything-config)
 (require 'recentf)
 (recentf-mode 1)
-
 
 
 ;;----------------------------------------------------------------------
@@ -328,6 +292,10 @@
         try-complete-file-name
         try-expand-dabbrev))
 
+
+;; -------------------------------------------------------
+;;  カーソルの行全体を削除する
+;; -------------------------------------------------------
 (defun kill-whole-line (&optional numlines)
   "One line is deleted wherever there is a cursor."
   (interactive "p")
@@ -354,4 +322,11 @@
  ;; どのファイルでもデフォルトで on にする場合
 (setq-default cn-outline-mode t)
 (global-set-key (kbd "C-c C-c C-c") 'cn-outline-mode)
+
+
+;; バックアップファイルを一箇所にまとめる
+;;  http://blawat2015.no-ip.com/~mieki256/diary/200609073.html
+(setq backup-directory-alist
+  (cons (cons "\\.*$" (expand-file-name "~/backup"))
+    backup-directory-alist))
 

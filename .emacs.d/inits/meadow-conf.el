@@ -1,3 +1,4 @@
+
 ;;; IMEの設定
 (mw32-ime-initialize)
 (setq default-input-method "MW32-IME")
