@@ -137,6 +137,40 @@ then
     source /Users/arinobu/.rvm/scripts/rvm
 fi
 
+# ---------------------------------------------------------
+# ctrl + 矢印で単語単位のカーソル移動
+#   From: http://d.hatena.ne.jp/tkng/20100712/1278896396
+# ---------------------------------------------------------
+bindkey ";5C" forward-word
+bindkey ";5D" backward-word
+
+export WORDCHARS='*?[]~=&;!#$%^(){}<>'
+
+# ---------------------------------------------------------
+# --prefix=の後のパス名を補完
+#   From: http://d.hatena.ne.jp/tkng/20100712/1278896396
+# ---------------------------------------------------------
+setopt magic_equal_subst
+
+# ---------------------------------------------------------
+# make の出力に色付け
+#   From: http://d.hatena.ne.jp/tkng/20100712/1278896396
+# ---------------------------------------------------------
+e_normal=`echo -e "\033[0;30m"`
+e_RED=`echo -e "\033[1;31m"`
+e_BLUE=`echo -e "\033[1;36m"`
+
+function make() {
+    LANG=C command make "$@" 2>&1 | sed -e "s@[Ee]rror:.*@$e_RED&$e_normal@g" -e "s@cannot\sfind.*@$e_RED&$e_normal@g" -e "s@[Ww]arning:.*@$e_BLUE&$e_normal@g"
+    }
+    function cwaf() {
+        LANG=C command ./waf "$@" 2>&1 | sed -e "s@[Ee]rror:.*@$e_RED&$e_normal@g" -e "s@cannot\sfind.*@$e_RED&$e_normal@g" -e "s@[Ww]arning:.*@$e_BLUE&$e_normal@g"
+}
+
+
+# ---------------------------------------------------------
+#   From: http://d.hatena.ne.jp/tkng/20100712/1278896396
+# ---------------------------------------------------------
 # historical backward/forward search with linehead string binded to ^P/^N
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
