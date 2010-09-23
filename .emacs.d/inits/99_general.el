@@ -330,3 +330,12 @@
   (cons (cons "\\.*$" (expand-file-name "~/backup"))
     backup-directory-alist))
 
+;; -------------------------------------------------------
+;; 矩形選択
+;;   From: http://tech.kayac.com/archive/emacs-rectangle.html
+;; -------------------------------------------------------
+(require 'sense-region)
+(sense-region-on)
+
+(cua-mode t)
+(setq cua-enable-cua-keys nil) ; そのままだと C-x が切り取りになってしまったりするので無効化

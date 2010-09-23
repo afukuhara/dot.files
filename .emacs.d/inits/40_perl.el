@@ -34,6 +34,7 @@
    (local-set-key "\C-c\C-y"  'cperl-warn-yaml)
    (local-set-key "\C-c\C-ch" 'cperl-pod4method)
    (local-set-key "\C-c\C-cf" 'cperl-use-feature)
+   (local-set-key "\C-c\C-cl" 'cperl-slurp)
 
 ;;    (require 'perl-completion)
 ;;    (add-to-list 'ac-sources 'ac-source-perl-completion)
@@ -75,6 +76,9 @@
    (defun cperl-use-feature ()
      (interactive)
      (insert "use feature \":5.10\"\;"))
+   (defun cperl-slurp ()
+     (interactive)
+     (insert "do { local( @ARGV, $/ ) = $file ; <> }"))
    ))
 
 ;; ;;; Perl Debug の設定
@@ -130,6 +134,11 @@
   (save-excursion
     (shell-command-on-region beg end "perl")))
 
+;; set-perl5lib
+;; 開いたスクリプトのパスに応じて、@INCにlibを追加してくれる
+;; 以下からダウンロードする必要あり
+;; http://svn.coderepos.org/share/lang/elisp/set-perl5lib/set-perl5lib.el
+(require 'set-perl5lib)
 
 ;;; ================================================================ ;;;
 ;;;                   flymake for Perl Programming                   ;;;
@@ -139,11 +148,6 @@
 ;; flymake (Emacs22から標準添付されている)
 (require 'flymake)
 
-;; set-perl5lib
-;; 開いたスクリプトのパスに応じて、@INCにlibを追加してくれる
-;; 以下からダウンロードする必要あり
-;; http://svn.coderepos.org/share/lang/elisp/set-perl5lib/set-perl5lib.el
-(require 'set-perl5lib)
 
 ;; エラー、ウォーニング時のフェイス
 (set-face-background 'flymake-errline "pink")
@@ -206,6 +210,7 @@
 
 (add-hook 'cperl-mode-hook 'flymake-perl-load)
 
-;;;                 flymake for Perl Programming [END]                ;;;
+;;; =============== flymake for Perl Programming [END] ============== ;;;
 
-;;;                 Perl Programming Settings [END]                   ;;;
+;;; =============== Perl Programming Settings [END] ================= ;;;
+

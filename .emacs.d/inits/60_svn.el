@@ -1,6 +1,8 @@
-;;-----------------------------------------------------------------
-;; psvn.el
-;;-----------------------------------------------------------------
+;;; ================================================================ ;;;
+;;;  Settings for Subversion
+;;; ================================================================ ;;;
+
+;; --- psvn.el ------------------------------------------------------ ;;
 (require 'psvn)
 
 (define-key svn-status-mode-map "q" 'egg-self-insert-command)
@@ -12,7 +14,6 @@
 (add-hook 'dired-mode-hook
           '(lambda ()
              (require 'dired-x)
-             ;;(define-key dired-mode-map "V" 'cvs-examine)
              (define-key dired-mode-map "V" 'svn-status)
              (turn-on-font-lock) ))
 

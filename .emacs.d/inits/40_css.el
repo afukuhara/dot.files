@@ -1,5 +1,3 @@
-
-
 ;; css-mode
 (autoload 'css-mode "css-mode")
 (setq auto-mode-alist
