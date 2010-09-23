@@ -757,7 +757,6 @@ mode-compile-remote-execute-command."
   :group 'compilation-remote)
 
 
-
 ;; @@ c-mode compile variables ;;;
 (defgroup compile-c nil
   "C Compilation options."
@@ -833,7 +832,6 @@ See `mode-compile-choosen-compiler' variable."
 in c mode."
   :type 'string
   :group 'compile-c)
-
 
 
 ;; @@ java-mode compile variables ;;;
@@ -913,7 +911,6 @@ in java mode."
   :group 'compile-java)
 
 
-
 ;; @@ c++-mode compile variables ;;;
 (defgroup compile-c++ nil
   "C++ compilation options"
@@ -987,7 +984,6 @@ This could be any form evaluating to a string.  See
 in c++ mode."
   :type 'string
   :group 'compile-c++)
-
 
 
 ;; @@ ada-mode compile variables ;;;
