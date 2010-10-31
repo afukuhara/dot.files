@@ -21,8 +21,19 @@
 ;; 分割したバッファへカーソルを移動できる．
 (windmove-default-keybindings)
 
+;; ----------------------------------------
+;;  auto-save-buffers.el
+;;    バッファの自動保存の設定
+;; ----------------------------------------
 (require 'auto-save-buffers)
-(run-with-idle-timer 2 t 'auto-save-buffers)
+(run-with-idle-timer 3 t 'auto-save-buffers)
+
+(define-key ctl-x-map "as" 'auto-save-buffers-toggle)
+
+;; C-x a w で自動保存時の末尾空白の有無を切り替え
+(define-key ctl-x-map "aw" 'auto-save-buffers-trailing-whitespace-toggle)
+
+
 
 ;; 最近開いたファイル
 (recentf-mode)
@@ -41,6 +52,20 @@
 
 ;; 縦分割時に文字を折り返す
 (setq truncate-partial-width-windows nil)
+
+;;====================================
+;;; 折り返し表示ON/OFF
+;;====================================
+(defun toggle-truncate-lines ()
+  "折り返し表示をトグル動作します."
+  (interactive)
+  (if truncate-lines
+      (setq truncate-lines nil)
+    (setq truncate-lines t))
+  (recenter))
+
+(global-set-key "\C-cl" 'toggle-truncate-lines) ; 折り返し表示ON/OFF
+
 
 ;; 列数表示
 (column-number-mode t)
@@ -220,46 +245,6 @@
 (add-hook 'html-mode-hook 'zencoding-mode) ;; Auto-start on any markup modes
 
 
-;;; =======================================================================
-;;;  今日のアジェンダを開く
-;;;  初めてアジェンダファイルを開く場合は、
-;;;  直近 (10日前まで) のアジェンダファイルの内容をデフォルト表示する
-;;; =======================================================================
-(defun todays-agenda ()
-
-  ;; from "doukaku"
-  ;; http://ja.doukaku.org/comment/1291/
-  (defun n-days-before (n)
-    `(lambda (time) (- time (* ,n 3600 24))))
-
-  (defun seconds-to-filename (sec)
-    (format-time-string "~/blog/%Y/%m%d.txt"
-                        (seconds-to-time sec)))
-
-  (let* ((now (float-time))
-         (new-filename (seconds-to-filename now))
-         (old-filename (seconds-to-filename now))
-         (count 1))
-    (find-file new-filename)
-    (if (not (file-readable-p old-filename))
-        (progn (while (and (not (file-readable-p old-filename))
-                           (< count 10))
-                 (setf now (funcall (n-days-before 1) now))
-                 (setf old-filename (seconds-to-filename now))
-                 (setf count (1+ count)))
-               (if (and (file-readable-p old-filename)
-                        (< count 10))
-                   (insert-file-contents  old-filename)
-                 (insert "# -*- coding: utf-8; -*-\n#+STARTUP: showall\n"))))))
-
-(defun command-todays-agenda ()
-  (interactive)
-  (todays-agenda))
-
-(global-set-key "\M-ra" 'command-todays-agenda)
-
-
-
 ;; -------------------------------------------------------
 ;;  auto-install.el
 ;; -------------------------------------------------------
@@ -337,5 +322,5 @@
 (require 'sense-region)
 (sense-region-on)
 
-(cua-mode t)
-(setq cua-enable-cua-keys nil) ; そのままだと C-x が切り取りになってしまったりするので無効化
+;; (cua-mode 'nil)
+;; (setq cua-enable-cua-keys nil) ; そのままだと C-x が切り取りになってしまったりするので無効化
