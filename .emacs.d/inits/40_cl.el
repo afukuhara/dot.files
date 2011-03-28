@@ -3,7 +3,7 @@
 ;;; ================================================================ ;;;
 
 (setq inferior-lisp-program "clisp")
-(add-to-list 'load-path "~/.emacs.d/elisp/slime")
+;; (add-to-list 'load-path "~/.emacs.d/elisp/slime")
 (require 'slime)
 (slime-setup)
 

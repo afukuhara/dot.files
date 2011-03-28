@@ -82,9 +82,6 @@
 
 (load "sorter")
 
-;; バッファの読み直し
-(global-set-key "\C-x\C-r" 'revert-buffer)
-
 ;; デフォルトの文字コード
 (setq default-buffer-file-coding-system 'utf-8)
 
@@ -296,7 +293,7 @@
 ;;  使い捨てのファイルを開く
 ;; -------------------------------------------------------
 (require 'open-junk-file)
-(setq open-junk-file-format "~/junk/%Y-%m-%d-%H%M%S.")
+(setq open-junk-file-format "~/junk/%Y/%m-%d-%H%M%S.")
 
 
 ;; -------------------------------------------------------
@@ -322,5 +319,75 @@
 (require 'sense-region)
 (sense-region-on)
 
-;; (cua-mode 'nil)
-;; (setq cua-enable-cua-keys nil) ; そのままだと C-x が切り取りになってしまったりするので無効化
+(setq cua-enable-cua-keys nil) ; そのままだと C-x が切り取りになってしまったりするので無効化
+(cua-mode t
+)
+
+; カーソル位置の単語をバッファ内から探す設定例
+(global-set-key "\M-o" (lambda () (interactive)
+                         (if (thing-at-point 'symbol)
+                             (occur (thing-at-point 'symbol))
+                           (call-interactively 'occur))))
+
+
+;; Emacs の compilation-mode で ansi color が化けてしまうことへの対処
+;; from: http://www.moreslowly.jp/mw/index.php?title=Emacs_%E3%81%AE_compilation-mode_%E3%81%A7_ansi_color_%E3%81%8C%E5%8C%96%E3%81%91%E3%81%A6%E3%81%97%E3%81%BE%E3%81%86%E3%81%93%E3%81%A8%E3%81%B8%E3%81%AE%E5%AF%BE%E5%87%A6
+;; (add-hook 'compilation-mode-hook 'ansi-color-for-comint-mode-on)
+;; (add-hook 'compilation-filter-hook
+;;           '(lambda ()
+;;              (let ((start-marker (make-marker))
+;;                    (end-marker (process-mark (get-buffer-process (current-buffer)))))
+;;                (set-marker start-marker (point-min))
+;;                (ansi-color-apply-on-region start-marker end-marker))))
+
+
+;;
+;; C-a と C-e を拡張する
+;; From: 空気のようなEmacs Lisp -2010 冬- - Emacs/Lisp/Drill - Emacsグループ
+;;       <http://emacs.g.hatena.ne.jp/k1LoW/20101211/1292046538>
+;;
+(require 'sequential-command)
+
+(define-sequential-command seq-home
+  back-to-indentation  beginning-of-line beginning-of-buffer seq-return)
+(global-set-key "\C-a" 'seq-home)
+
+(define-sequential-command seq-end
+  end-of-line end-of-buffer seq-return)
+(global-set-key "\C-e" 'seq-end)
+
+
+;;
+;; popwin.el
+;; From: ヘルプバッファや補完バッファをポップアップで表示してくれるpopwin.el
+;;        <http://d.hatena.ne.jp/m2ym/20110120/1295524932>
+;;
+(require 'popwin)
+(setq display-buffer-function 'popwin:display-buffer)
+(push '("*auto-async-byte-compile*" :height 20) popwin:special-display-config)
+(push '(dired-mode :position top) popwin:special-display-config)
+
+;; カーソル付近のファイル/URL を開く
+(ffap-bindings)
+
+
+;; ===== undo 関連 [start] =====
+
+;;
+;; バッファを閉じてもアンドゥ情報を保持
+;;
+(require 'undohist)
+(undohist-initialize)
+
+;;
+;; undo の履歴を木構造としてもって、それを辿る事ができる elisp
+;; From: undo-tree.el の導入 - とりあえず暇だったし何となく始めたブログ
+;;       <http://d.hatena.ne.jp/khiker/20100123/undo_tree>
+;;
+(require 'undo-tree)
+(global-undo-tree-mode)
+
+;; =============================
+
+
+

@@ -7,8 +7,8 @@
 (require 'mmm-mode)
 (setq mmm-global-mode 'maybe)
 ;; 色設定．これは，好みで．色をつけたくないなら nil にします．
-(set-face-background 'mmm-default-submode-face "alice blue")
-
+(set-face-background 'mmm-default-submode-face "SlateGray1")
+(set-face-background 'mmm-default-submode-face "#ddf4ff")
 
 (mmm-add-group
  'html-js
@@ -36,3 +36,21 @@
     :delimiter-mode nil
     :front "<style[^>]*>"
     :back "</style>")))
+
+(mmm-add-classes
+ '((embedded-php
+    :submode sh-mode
+    :front "<\\?php"
+    :back "\\?>")
+   ))
+(mmm-add-mode-ext-class nil "\\.txt?\\'" 'embedded-php)
+(mmm-add-mode-ext-class nil "\\.org?\\'" 'embedded-php)
+
+(mmm-add-classes
+ '((embedded-sql
+    :submode sql-mode
+    :front "# *<sql>
+"
+    :back "# *</sql>")
+   ))
+(mmm-add-mode-ext-class nil "\\.sh?\\'" 'embedded-sql)

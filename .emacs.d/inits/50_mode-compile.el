@@ -1,3 +1,4 @@
+;;; -*- coding: utf-8 -*-
 
 ;; mode-compile
 (autoload 'mode-compile "mode-compile"

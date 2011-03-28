@@ -15,7 +15,8 @@
 (setq org-default-notes-file (concat org-directory "agenda.org"))
 (setq org-remember-templates
       '(("Todo" ?t "** TODO %?\n   %i\n   %a\n   %t" nil "Inbox")
-        ("Book" ?b "** %?\n   %i\n   %a\n   %T" nil "Book Memo")
+        ("Bug"  ?b "** TODO %?   :bug:\n   %i\n   %a\n   %t" nil "Inbox")
+        ("Book" ?o "** %?\n   %i\n   %a\n   %T" nil "Book Memo")
         ("Idea" ?i "** %?\n   %i\n   %a\n   %t" nil "New Ideas")
         ("Tips" ?p "** %?\n   %i\n   %a\n   %t" nil "Tips")
         ("WorkMemo" ?m "** %?\n   %i\n   %a\n   %T" nil "Work Memos")
@@ -114,3 +115,4 @@
              ,org-code-reading-file "Memo"))))
     (org-remember)))
 
+;;; ================================================================ ;;;
