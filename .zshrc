@@ -179,5 +179,5 @@ bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 
 source /Users/arinobu/perl5/perlbrew/etc/bashrc
-
+source /Users/arinobu/.pythonbrew/etc/bashrc
 
