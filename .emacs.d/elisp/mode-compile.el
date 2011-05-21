@@ -345,7 +345,8 @@
     (tcl-mode              . (tcl-compile       kill-compilation)) ; JWH
     (python-mode           . (python-compile    kill-compilation)) ; BM
     (ruby-mode             . (ruby-compile      kill-compilation)) ; CLGC
-    (php-mode              . (php-compile       kill-compilation)) ; CLGC
+    (php-mode              . (php-compile       kill-compilation)) ; AF
+    (coffee-mode           . (coffee-compile    kill-compilation)) ; AF
     ;(message-mode          . (message-compile   kill-compilation))
     (fundamental-mode      . (guess-compile     nil)) ; bound dynamically
     (text-mode             . (guess-compile     nil)) ; itou
@@ -426,7 +427,8 @@ To add a new filename regexp do the following:
     ("tcl"    .   tcl-mode) ; JWH
     ("python" . python-mode) ; BM
     ("ruby"   . ruby-mode) ; CLGC
-    ("php"    . php-mode))
+    ("php"    . php-mode)  ; AF
+    ("coffee" . coffee-mode)) ; AF
   "Assoc list of compile function for some known shells.
 
 Each element look like (SHELL . MODE) This variable look like
@@ -1303,14 +1305,14 @@ See variable compilation-error-regexp-alist for more details.")
   "Ruby compilation options"
   :group 'compilation-script)
 
-(defcustom ruby-command "ruby" 
-  "Command to run ruby" 
-  :type 'string 
+(defcustom ruby-command "ruby"
+  "Command to run ruby"
+  :type 'string
   :group 'compile-ruby)
 
-(defcustom ruby-dbg-flags "-w" 
-  "Flags to give ruby for catching warnings" 
-  :type 'string 
+(defcustom ruby-dbg-flags "-w"
+  "Flags to give ruby for catching warnings"
+  :type 'string
   :group 'compile-ruby)
 
 (defvar ruby-compilation-error-regexp-alist
@@ -1328,14 +1330,14 @@ See variable compilation-error-regexp-alist for more details.")
   "PHP compilation options"
   :group 'compilation-script)
 
-(defcustom php-command "php" 
-  "Command to run php" 
-  :type 'string 
+(defcustom php-command "php"
+  "Command to run php"
+  :type 'string
   :group 'compile-php)
 
-(defcustom php-dbg-flags "" 
-  "Flags to give php for catching warnings" 
-  :type 'string 
+(defcustom php-dbg-flags ""
+  "Flags to give php for catching warnings"
+  :type 'string
   :group 'compile-php)
 
 
@@ -1348,6 +1350,32 @@ See variable compilation-error-regexp-alist for more details.")
   "Alist that specifies how to match errors in php output.
 
 See variable compilation-error-regexp-alist for more details.")
+
+;; @@ coffee-mode compile variables ;;;
+(defgroup compile-coffee nil
+  "COFFEE compilation options"
+  :group 'compilation-script)
+
+(defcustom coffee-command "coffee"
+  "Command to run coffee"
+  :type 'string
+  :group 'compile-coffee)
+
+(defcustom coffee-dbg-flags ""
+  "Flags to give coffee for catching warnings"
+  :type 'string
+  :group 'compile-coffee)
+
+
+(defvar coffee-compilation-error-regexp-alist
+  '(
+    ;; Errors and Warnings
+    ("at \\([^ ]+?\\.coffee\\):\\([0-9]+\\):[0-9]+"))
+  "Alist that specifies how to match errors in coffee output.
+
+See variable compilation-error-regexp-alist for more details.")
+
+
 
 ;; @@ emacs lisp compile variables ;;;
 
@@ -2041,9 +2069,9 @@ Please send bugs-fixes/contributions/comments to boubaker@cena.fr")
                             (mc--eval mc--comp-options))
                         (if to-compile-fname
                             (if mc--build-op-args
-				(mc--build-output-args to-compile-fname)
-			      (concat " " to-compile-fname)
-			      )
+                               (mc--build-output-args to-compile-fname)
+                             (concat " " to-compile-fname)
+                             )
                           " "))))
       (if (not mode-compile-never-edit-command-p)
           (setq mc--compile-command
@@ -2435,7 +2463,7 @@ See variables compilation-error-regexp-alist or ruby-compilation-error-regexp-al
   (mc--shell-compile ruby-command ruby-dbg-flags ruby-compilation-error-regexp-alist))
 
 (defun php-compile ()
-  ;; CLGC
+  ;; AF
   "Run `php-command' on current-buffer (`php-mode').
 
 User is prompted for arguments to run their php program with.
@@ -2443,6 +2471,16 @@ If you want to step throught errors set the variable `php-compilation-error-rege
 to a value understandable by compile's `next-error'.
 See variables compilation-error-regexp-alist or php-compilation-error-regexp-alist."
   (mc--shell-compile php-command php-dbg-flags php-compilation-error-regexp-alist))
+
+(defun coffee-compile ()
+  ;; AF
+  "Run `coffee-command' on current-buffer (`coffee-mode').
+
+User is prompted for arguments to run their coffee program with.
+If you want to step throught errors set the variable `coffee-compilation-error-regexp-alist'
+to a value understandable by compile's `next-error'.
+See variables compilation-error-regexp-alist or coffee-compilation-error-regexp-alist."
+  (mc--shell-compile coffee-command coffee-dbg-flags coffee-compilation-error-regexp-alist))
 
 
 (defun default-compile ()
@@ -2578,6 +2616,7 @@ Currently know how to compile in:
  `python-mode'           -- function python-compile.
  `ruby-mode'             -- function ruby-compile.
  `php-mode'              -- function php-compile.
+ `coffee-mode'           -- function coffee-compile.
  `fundamental-mode'      -- function guess-compile.
  `text-mode'             -- function guess-compile.
  `indented-text-mode'    -- function guess-compile.
@@ -2683,7 +2722,8 @@ Currently know how to kill compilations from:
  `tcl-mode'              -- function kill-compilation.
  `python-mode'           -- function kill-compilation.
  `ruby-mode'             -- function kill-compilation.
- `php-mode'             -- function kill-compilation.
+ `php-mode'              -- function kill-compilation.
+ `coffee-mode'           -- function kill-compilation.
  `fundamental-mode'      -- Bound dynamically.
  `text-mode'             -- Bound dynamically.
  `indented-text-mode'    -- Bound dynamically.
