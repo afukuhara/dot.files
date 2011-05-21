@@ -191,22 +191,22 @@
 ;;;               Smartchr Settings                                  ;;;
 ;;; ================================================================ ;;;
 
-(require 'smartchr)
+;; (require 'smartchr)
 ;; (global-set-key (kbd "=") (smartchr '(" = " " == "  "=")))
-(global-set-key (kbd "{") (smartchr '("{ `!!' }" "{")))
-(global-set-key (kbd "(") (smartchr '("(`!!')" "((`!!'))" "(")))
+;; (global-set-key (kbd "{") (smartchr '("{ `!!' }" "{")))
+;; (global-set-key (kbd "(") (smartchr '("(`!!')" "((`!!'))" "(")))
+
 
 ;;; ================================================================ ;;;
 ;;;  日付入力
 ;;; ================================================================ ;;;
 (defun my-get-date-gen (form) (insert (format-time-string form)))
-(defun my-get-date () (interactive) (my-get-date-gen "%Y年%m月%d日"))
-(defun my-get-time () (interactive) (my-get-date-gen "%H時%M分"))
-(defun my-get-dtime () (interactive) (my-get-date-gen "%Y年%m月%d日 %H時%M分"))
-(global-set-key "\C-c\C-d" 'my-get-date)
-(global-set-key "\C-c\C-t" 'my-get-time)
-(global-set-key "\C-c\ed" 'my-get-dtime)
-
+(defun my-get-date       () (interactive) (my-get-date-gen "%Y-%m-%d"))
+(defun my-get-date-short () (interactive) (my-get-date-gen "%Y%m%d"))
+(defun my-get-date-abbr  () (interactive) (my-get-date-gen "%y%m%d"))
+(global-set-key [f5] 'my-get-date)
+(global-set-key [f6] 'my-get-date-short)
+(global-set-key [f7] 'my-get-date-abbr)
 
 
 ;; -------------------------------------------------------
@@ -293,7 +293,7 @@
 ;;  使い捨てのファイルを開く
 ;; -------------------------------------------------------
 (require 'open-junk-file)
-(setq open-junk-file-format "~/junk/%Y/%m-%d-%H%M%S.")
+(setq open-junk-file-format "~/junk/%Y/%Y-%m-%d-%H%M%S.")
 
 
 ;; -------------------------------------------------------
@@ -320,8 +320,7 @@
 (sense-region-on)
 
 (setq cua-enable-cua-keys nil) ; そのままだと C-x が切り取りになってしまったりするので無効化
-(cua-mode t
-)
+(cua-mode t)
 
 ; カーソル位置の単語をバッファ内から探す設定例
 (global-set-key "\M-o" (lambda () (interactive)
@@ -388,6 +387,4 @@
 (global-undo-tree-mode)
 
 ;; =============================
-
-
 
