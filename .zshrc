@@ -182,3 +182,10 @@ bindkey "^N" history-beginning-search-forward-end
 source /Users/arinobu/perl5/perlbrew/etc/bashrc
 source /Users/arinobu/.pythonbrew/etc/bashrc
 
+
+# ---------------------------------------------------------
+#  Incremental completion
+#    From: http://d.hatena.ne.jp/seiunsky/20110519/1305764493
+# ---------------------------------------------------------
+source ~/.zsh/plugin/incr*.zsh
+
