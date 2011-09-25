@@ -45,6 +45,7 @@ bindkey     " "         my-expand-abbrev
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
+setopt hist_reduce_blanks   #
 setopt hist_ignore_dups     # ignore duplication command history list
 setopt share_history        # share command history data
 
@@ -117,9 +118,9 @@ _update_rprompt () {
     else
         RPROMPT=""
     fi
-} 
-                                  
-precmd () { 
+}
+
+precmd () {
     _set_env_git_current_branch
     _update_rprompt
 }
@@ -132,8 +133,8 @@ chpwd () {
 
 # Show git branch [END]
 
-if [[ -s /Users/arinobu/.rvm/scripts/rvm ]] 
-then 
+if [[ -s /Users/arinobu/.rvm/scripts/rvm ]]
+then
     source /Users/arinobu/.rvm/scripts/rvm
 fi
 
@@ -162,8 +163,8 @@ e_BLUE=`echo -e "\033[1;36m"`
 
 function make() {
     LANG=C command make "$@" 2>&1 | sed -e "s@[Ee]rror:.*@$e_RED&$e_normal@g" -e "s@cannot\sfind.*@$e_RED&$e_normal@g" -e "s@[Ww]arning:.*@$e_BLUE&$e_normal@g"
-    }
-    function cwaf() {
+}
+function cwaf() {
         LANG=C command ./waf "$@" 2>&1 | sed -e "s@[Ee]rror:.*@$e_RED&$e_normal@g" -e "s@cannot\sfind.*@$e_RED&$e_normal@g" -e "s@[Ww]arning:.*@$e_BLUE&$e_normal@g"
 }
 
