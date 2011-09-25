@@ -80,6 +80,10 @@ else
 
 endif " has("autocmd")
 
+" Pathogen
+call pathogen#runtime_append_all_bundles()
+
+
 set noautoindent
 set nosmartindent
 set tabstop=4  " タブ幅を 4 にする
@@ -88,9 +92,6 @@ set tabstop=4  " タブ幅を 4 にする
 set nobackup   " バックアップなファイル(*~)を作らない。
 syntax on
 
-" " 全角スペースを視覚化
-" highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=white
-" match ZenkakuSpace /　/
 
 " " 全角スペースを視覚化
 " highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=white
@@ -145,7 +146,6 @@ imap "" ""<Left>
 imap '' ''<Left>
 imap <> <><Left>
 
-call pathogen#runtime_append_all_bundles()
 
 
 " Disable AutoComplPop.
@@ -174,3 +174,41 @@ if !exists('g:neocomplcache_keyword_patterns')
     let g:neocomplcache_keyword_patterns = {}
 endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+
+
+" ------------------------------------------------------------
+"  Settings for Vundle
+" ------------------------------------------------------------
+filetype off
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" plugins managed by Vundle
+"
+" original repos on github
+Bundle 'gmarik/vundle'
+Bundle 'Shougo/vimfiler'
+Bundle 'Shougo/unite.vim'
+
+" vim-scripts repos
+Bundle 'DirDiff.vim'
+
+filetype plugin indent on
+"
+" Brief help
+" :BundleList          - list configured bundles
+" :BundleInstall(!)    - install(update) bundles
+" :BundleSearch(!) foo - search(or refresh cache first) for foo
+" :BundleClean(!)      - confirm(or auto-approve) removal of unused bundles
+"
+" see :h vundle for more details or wiki for FAQ
+" NOTE: comments after Bundle command are not allowed..
+
+
+" ------------------------------------------------------------
+"  検索結果のハイライトを ESC キーの連打でリセットする
+" ------------------------------------------------------------
+:nnoremap <ESC><ESC> :nohlsearch<CR>
+
+
