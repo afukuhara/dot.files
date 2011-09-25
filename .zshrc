@@ -99,8 +99,8 @@ preexec () {
   [ ${STY} ] && echo -ne "\ek${1%% *}\e\\"
 }
 
-[ ${STY} ] || tscreen -rx || tscreen -D -RR
-# [ ${STY} ] || screen -rx || screen -D -RR
+# [ ${STY} ] || tscreen -rx || tscreen -D -RR
+[ ${STY} ] || screen -rx || screen -D -RR
 ## end
 
 setopt IGNORE_EOF
