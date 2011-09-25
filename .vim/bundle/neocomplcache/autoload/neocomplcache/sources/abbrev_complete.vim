@@ -24,6 +24,9 @@
 " }}}
 "=============================================================================
 
+let s:save_cpo = &cpo
+set cpo&vim
+
 let s:source = {
       \ 'name' : 'abbrev_complete',
       \ 'kind' : 'plugin',
@@ -38,28 +41,32 @@ endfunction"}}}
 
 function! s:source.get_keyword_list(cur_keyword_str)"{{{
   " Get current abbrev list.
-  let l:abbrev_list = ''
-  redir => l:abbrev_list
+  let abbrev_list = ''
+  redir => abbrev_list
   silent! iabbrev
   redir END
 
-  let l:list = []
-  for l:line in split(l:abbrev_list, '\n')
-    let l:abbrev = split(l:line)
+  let list = []
+  for line in split(abbrev_list, '\n')
+    let abbrev = split(line)
 
-    if l:abbrev[0] !~ '^[!i]$'
+    if abbrev[0] !~ '^[!i]$'
       " No abbreviation found.
       return []
     endif
 
-    call add(l:list, 
-          \{ 'word' : l:abbrev[1], 'menu' : printf('[A] %.'. g:neocomplcache_max_filename_width.'s', l:abbrev[2]) })
+    call add(list, 
+          \{ 'word' : abbrev[1], 'menu' : printf('[A] %.'. g:neocomplcache_max_filename_width.'s', abbrev[2]) })
   endfor
 
-  return neocomplcache#keyword_filter(l:list, a:cur_keyword_str)
+  return neocomplcache#keyword_filter(list, a:cur_keyword_str)
 endfunction"}}}
 
 function! neocomplcache#sources#abbrev_complete#define()"{{{
   return s:source
 endfunction"}}}
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
+
 " vim: foldmethod=marker

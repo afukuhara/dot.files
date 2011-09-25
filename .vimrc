@@ -147,7 +147,16 @@ imap '' ''<Left>
 imap <> <><Left>
 
 
+" ------------------------------------------------------------
+"  挿入モード時、ステータスラインの色を変更
+"    From:  http://sites.google.com/site/fudist/Home/vim-nihongo-ban/-vimrc-sample
+" ------------------------------------------------------------
+let g:hi_insert = 'highlight StatusLine guifg=darkblue guibg=darkyellow gui=none ctermfg=blue ctermbg=yellow cterm=none'
 
+
+" ------------------------------------------------------------
+"  Settings for neocomplcache
+" ------------------------------------------------------------
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
 " Use neocomplcache.
@@ -190,9 +199,15 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'Shougo/vimfiler'
 Bundle 'Shougo/unite.vim'
+Bundle 'Shougo/neocomplcache'
+Bundle 'tsaleh/vim-align'
+Bundle 'thinca/vim-ref'
+Bundle 'thinca/vim-quickrun'
+Bundle 'thinca/vim-qfreplace'
 
 " vim-scripts repos
 Bundle 'DirDiff.vim'
+Bundle 'errormarker.vim'
 
 filetype plugin indent on
 "
@@ -210,5 +225,82 @@ filetype plugin indent on
 "  検索結果のハイライトを ESC キーの連打でリセットする
 " ------------------------------------------------------------
 :nnoremap <ESC><ESC> :nohlsearch<CR>
+
+
+" ------------------------------------------------------------
+"  ビジュアルモードでインデント変更後も選択を継続する
+" ------------------------------------------------------------
+vnoremap < <gv
+vnoremap > >gv
+
+
+" ------------------------------------------------------------
+"  Setting for Align
+" ------------------------------------------------------------
+:let g:Align_xstrlen = 3     " for japanese string
+:let g:DrChipTopLvMenu = ''  " remove 'DrChip' menu
+
+
+" ------------------------------------------------------------
+"  Setting for CTAGS browsing
+" ------------------------------------------------------------
+noremap <silent>  <C-[>  :pop<CR>
+
+
+" ------------------------------------------------------------
+"  Setting for errormaker.vim
+" ------------------------------------------------------------
+let g:errormaker_errortext    = '!!'
+let g:errormaker_warningtext  = '??'
+let g:errormaker_errorgroup   = 'Error'
+let g:errormaker_warninggroup = 'Todo'
+
+
+" ------------------------------------------------------------
+"  Setting for unite.vim
+" ------------------------------------------------------------
+" 入力モードで開始する
+let g:unite_enable_start_insert=1
+" バッファ一覧
+noremap <C-P> :Unite buffer<CR>
+" ファイル一覧
+noremap <C-N> :Unite -buffer-name=file file<CR>
+" 最近使ったファイルの一覧
+noremap <C-Z> :Unite file_mru<CR>
+
+" ウィンドウを分割して開く
+au FileType unite nnoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
+au FileType unite inoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
+
+" ウィンドウを縦に分割して開く
+au FileType unite nnoremap <silent> <buffer> <expr> <C-K> unite#do_action('vsplit')
+au FileType unite inoremap <silent> <buffer> <expr> <C-K> unite#do_action('vsplit')
+
+" ESCキーを2回押すと終了する
+au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
+au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
+
+" 初期設定関数を起動する
+au FileType unite call s:unite_my_settings()
+function! s:unite_my_settings()
+  " Overwrite settings.
+endfunction
+
+" 様々なショートカット
+call unite#set_substitute_pattern('file', '\$\w\+', '\=eval(submatch(0))', 200)
+call unite#set_substitute_pattern('file', '^@@', '\=fnamemodify(expand("#"), ":p:h")."/"', 2)
+call unite#set_substitute_pattern('file', '^@', '\=getcwd()."/*"', 1)
+call unite#set_substitute_pattern('file', '^;r', '\=$VIMRUNTIME."/"')
+call unite#set_substitute_pattern('file', '^\~', escape($HOME, '\'), -2)
+call unite#set_substitute_pattern('file', '\\\@<! ', '\\ ', -20)
+call unite#set_substitute_pattern('file', '\\ \@!', '/', -30)
+
+if has('win32') || has('win64')
+  call unite#set_substitute_pattern('file', '^;p', 'C:/Program Files/')
+  call unite#set_substitute_pattern('file', '^;v', '~/vimfiles/')
+else
+  call unite#set_substitute_pattern('file', '^;v', '~/.vim/')
+endif
+
 
 
