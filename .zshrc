@@ -189,3 +189,11 @@ source /Users/arinobu/.pythonbrew/etc/bashrc
 # ---------------------------------------------------------
 source ~/.zsh/plugin/incr*.zsh
 
+
+# ---------------------------------------------------------
+#  less source code highlight
+#    From: http://blog.elliptium.net/2011/11/less-homebrew
+# ---------------------------------------------------------
+export LESS='-R'
+export LESSOPEN='| /usr/local/bin/src-hilite-lesspipe.sh %s'
+
