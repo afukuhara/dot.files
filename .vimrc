@@ -80,9 +80,18 @@ else
 
 endif " has("autocmd")
 
+" ----------------------------------------------------------------------
+"  sudo でユーザを変更している場合にランタイムのパスを変更する
+" ----------------------------------------------------------------------
+if exists("$SUDO_USER")
+  if $SUDO_USER == 'arinobu'
+    set runtimepath+=/Users/arinobu/.vim/
+  endif
+endif
+
+
 " Pathogen
 call pathogen#runtime_append_all_bundles()
-
 
 set noautoindent
 set nosmartindent
@@ -266,7 +275,7 @@ noremap <C-P> :Unite buffer<CR>
 " ファイル一覧
 noremap <C-N> :Unite -buffer-name=file file<CR>
 " 最近使ったファイルの一覧
-noremap <C-Z> :Unite file_mru<CR>
+noremap <C-H> :Unite file_mru<CR>
 
 " ウィンドウを分割して開く
 au FileType unite nnoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
