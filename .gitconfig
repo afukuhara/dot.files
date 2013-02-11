@@ -1,0 +1,13 @@
+[color]
+  status = auto
+  diff = auto
+  log = auto
+[alias]
+   co = checkout
+   ci = commit
+   st = status
+   up = pull --rebase
+   di = diff
+[user]
+	name = Arinobu FUKUHARA
+	email = afukuhara@gmail.com
