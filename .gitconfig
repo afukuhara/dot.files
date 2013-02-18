@@ -4,10 +4,10 @@
   log    = auto
 
 [color "diff"]
-   meta = blue bold
-   frag = magenta bold
-   old  = red bold
-   new  = green bold
+  meta = blue bold
+  frag = magenta bold
+  old  = red bold
+  new  = green bold
 
 [alias]
   co = checkout
@@ -18,12 +18,12 @@
   lg = log --graph --pretty=oneline --decorate --date=short --abbrev-commit --branches
 
 [log]
-    date = local
+  date = local
 
 [i18n]
-    logOutputEncoding = utf-8
+  logOutputEncoding = utf-8
 
 [user]
-  name = Arinobu FUKUHARA
+  name  = Arinobu FUKUHARA
   email = afukuhara@gmail.com
 
