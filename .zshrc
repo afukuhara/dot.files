@@ -83,7 +83,7 @@ esac
 case "${TERM}" in
 kterm*|xterm*)
 precmd() {
-  echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
+#  echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
 }
 export LSCOLORS=exfxcxdxbxegedabagacad
 export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
@@ -101,6 +101,7 @@ preexec () {
 
 # [ ${STY} ] || tscreen -rx || tscreen -D -RR
 # [ ${STY} ] || screen -rx || screen -D -RR
+[ ${TMUX} ] || tmux a || tmux
 ## end
 
 setopt IGNORE_EOF
@@ -133,9 +134,9 @@ chpwd () {
 
 # Show git branch [END]
 
-if [[ -s /Users/arinobu/.rvm/scripts/rvm ]]
+if [[ -s ~/.rvm/scripts/rvm ]]
 then
-    source /Users/arinobu/.rvm/scripts/rvm
+    source ~/.rvm/scripts/rvm
 fi
 
 # ---------------------------------------------------------
@@ -179,8 +180,8 @@ zle -N history-beginning-search-forward-end history-search-end
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
 
-source /Users/arinobu/perl5/perlbrew/etc/bashrc
-source /Users/arinobu/.pythonbrew/etc/bashrc
+source ~/perl5/perlbrew/etc/bashrc
+# source ~/.pythonbrew/etc/bashrc
 
 
 # ---------------------------------------------------------
@@ -197,3 +198,20 @@ source /Users/arinobu/.pythonbrew/etc/bashrc
 export LESS='-R'
 export LESSOPEN='| /usr/local/bin/src-hilite-lesspipe.sh %s'
 
+
+# ---------------------------------------------------------
+#  z.sh
+#
+# USE:
+#   * z foo     # goes to most frecent dir matching foo
+#   * z foo bar # goes to most frecent dir matching foo and bar
+#   * z -r foo  # goes to highest ranked dir matching foo
+#   * z -t foo  # goes to most recently accessed dir matching foo
+#   * z -l foo  # list all dirs matching foo (by frecency)#
+# ---------------------------------------------------------
+# . ~/bin/z-zsh/z.sh
+# precmd () {
+#  z --add "$(pwd -P)"
+# }
+
+export PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
