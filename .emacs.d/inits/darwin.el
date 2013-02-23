@@ -17,13 +17,22 @@
 
 
 ;; initial value of frame
-(setq default-frame-alist
-      (append (list '(width . 100)
-                    '(height . 88)
-                    '(top . 25)
-                    '(left . 10)
-            '(background-color . "snow"))
-              default-frame-alist))
+(cond ((string= system-name "afukuhara-mba.local") ; for Linux (GNU Emacs)
+       (setq default-frame-alist
+             (append (list '(width . 100)
+                           '(height . 55)
+                           '(top . 1)
+                           '(left . 1)
+                           '(background-color . "snow"))
+                     default-frame-alist)))
+      ((string= system-name "afukuhara.local") ; for Mac
+       (setq default-frame-alist
+             (append (list '(width . 100)
+                           '(height . 88)
+                           '(top . 25)
+                           '(left . 10)
+                           '(background-color . "snow"))
+                     default-frame-alist))))
 
 
 (setq scheme-program-name "/usr/local/bin/scm")
@@ -63,7 +72,7 @@
   (define-key scheme-mode-map "\C-c\C-d" m))
 
 ;; C-c C-,でinfoの次のトピックを表示します(検索結果が複数あった場合)
-(define-key scheme-mode-map [(control c) (control ,)] 'gca-info-next)
+;; (define-key scheme-mode-map [(control c) (control ,)] 'gca-info-next)
 
 ;; C-. でシンボルを補完する
 (define-key scheme-mode-map [(control .)] 'gca-completion-current-word)
@@ -82,4 +91,3 @@
 
 ;; 単体テストケース作成の支援(gca-make-test, gca-show-history)を使うには
 (setq scheme-program-name "gosh ~/.emacs.d/elisp/tgosh.scm")
-
