@@ -27,3 +27,8 @@
   name  = Arinobu FUKUHARA
   email = afukuhara@gmail.com
 
+[merge]
+  ff = false
+
+[pull]
+  rebase = true
